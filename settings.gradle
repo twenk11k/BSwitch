@@ -1,0 +1,3 @@
+include ':bswitch'
+include ':app'
+rootProject.name = "BSwitch"
