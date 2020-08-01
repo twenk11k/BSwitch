@@ -38,10 +38,11 @@ class BSwitch : View, Checkable {
     private val heightDefault: Int = dpToPxInt(32f)
     private val durationDefault = 400
     private var borderWidthDefault = 2f
+    private var circleStrokeWidthDefault = 2f
     private val circlePadding = 8
 
     private var borderWidth = dpToPxInt(borderWidthDefault)
-
+    private var circleStrokeWidth = dpToPxInt(circleStrokeWidthDefault)
     private var isChecked = false
 
     private var uncheckedColor = 0
@@ -147,6 +148,12 @@ class BSwitch : View, Checkable {
             dpToPxInt(borderWidthDefault)
         )
 
+        circleStrokeWidth = typedPixelSize(
+            typedArray,
+            R.styleable.BSwitch_circle_stroke_width,
+            dpToPxInt(circleStrokeWidthDefault)
+        )
+
         val duration: Int = typedInt(
             typedArray,
             R.styleable.BSwitch_duration,
@@ -186,7 +193,7 @@ class BSwitch : View, Checkable {
     private fun initCirclePaint() {
         circlePaint = Paint(Paint.ANTI_ALIAS_FLAG)
         circlePaint?.style = Paint.Style.STROKE
-        circlePaint?.strokeWidth = 1f
+        circlePaint?.strokeWidth = circleStrokeWidth.toFloat()
         circlePaint?.color = Color.WHITE
     }
 
