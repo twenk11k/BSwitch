@@ -185,11 +185,9 @@ class BSwitch : View, Checkable {
 
     private fun initCirclePaint() {
         circlePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-
         circlePaint?.style = Paint.Style.STROKE
         circlePaint?.strokeWidth = 1f
         circlePaint?.color = Color.WHITE
-
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -261,9 +259,9 @@ class BSwitch : View, Checkable {
         animateState = ANIMATE_STATE_SWITCH
         beforeState?.update(viewState!!)
         if (isChecked()) {
-            setUncheckViewState(afterState, isTouch)
-        } else {
             setCheckedViewState(afterState, isTouch)
+        } else {
+            setUnCheckedViewState(afterState, isTouch)
         }
         valueAnimator?.start()
     }
@@ -293,20 +291,21 @@ class BSwitch : View, Checkable {
         buttonMaxX = right - viewRadius
         Log.d("BSwitch", "minX: $buttonMinX")
         Log.d("BSwitch", "maxX: $buttonMaxX")
+        isChecked = true
         if (isChecked()) {
-            setCheckedViewState(viewState, false)
+            setUnCheckedViewState(viewState, true)
         } else {
-            setUncheckViewState(viewState, false)
+            setCheckedViewState(viewState, true)
         }
+
         isSizeChanged = true
         postInvalidate()
     }
 
-    private fun setCheckedViewState(viewState: ViewState?, isTouch: Boolean) {
-        Log.d("BSwitch", "toggle checked")
-        Log.d("BSwitch", "UncheckedView: ${1 - viewRadius}")
+    private fun setUnCheckedViewState(viewState: ViewState?, isReversed: Boolean) {
+        Log.d("BSwitch", "toggle unchecked")
         viewState?.radius = viewRadius
-        if (isTouch) {
+        if (isReversed) {
             viewState?.checkStateColor = uncheckedColor
             viewState?.buttonX = buttonMaxX
         } else {
@@ -315,10 +314,10 @@ class BSwitch : View, Checkable {
         }
     }
 
-    private fun setUncheckViewState(viewState: ViewState?, isTouch: Boolean) {
-        Log.d("BSwitch", "toggle unchecked")
+    private fun setCheckedViewState(viewState: ViewState?, isReversed: Boolean) {
+        Log.d("BSwitch", "toggle checked")
         viewState?.radius = 1f
-        if (isTouch) {
+        if (isReversed) {
             viewState?.checkStateColor = checkedColor
             viewState?.buttonX = buttonMinX
         } else {
@@ -333,16 +332,12 @@ class BSwitch : View, Checkable {
         val widthMode = MeasureSpec.getMode(widthMeasureSpec1)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec1)
 
-        if (widthMode == MeasureSpec.UNSPECIFIED
-            || widthMode == MeasureSpec.AT_MOST
-        ) {
+        if (widthMode == MeasureSpec.UNSPECIFIED || widthMode == MeasureSpec.AT_MOST)
             widthMeasureSpec1 = MeasureSpec.makeMeasureSpec(widthDefault, MeasureSpec.EXACTLY)
-        }
-        if (heightMode == MeasureSpec.UNSPECIFIED
-            || heightMode == MeasureSpec.AT_MOST
-        ) {
+
+        if (heightMode == MeasureSpec.UNSPECIFIED || heightMode == MeasureSpec.AT_MOST)
             heightMeasureSpec1 = MeasureSpec.makeMeasureSpec(heightDefault, MeasureSpec.EXACTLY)
-        }
+
         super.onMeasure(widthMeasureSpec1, heightMeasureSpec1)
     }
 
@@ -565,9 +560,9 @@ class BSwitch : View, Checkable {
             animateState = ANIMATE_STATE_PENDING_RESET
             beforeState?.update(viewState!!)
             if (isChecked()) {
-                setCheckedViewState(afterState, true)
+                setUnCheckedViewState(afterState, true)
             } else {
-                setUncheckViewState(afterState, true)
+                setCheckedViewState(afterState, true)
             }
             valueAnimator?.start()
         }
@@ -618,9 +613,9 @@ class BSwitch : View, Checkable {
         animateState = ANIMATE_STATE_PENDING_SETTLE
         beforeState?.update(viewState!!)
         if (isChecked()) {
-            setCheckedViewState(afterState, true)
+            setUnCheckedViewState(afterState, true)
         } else {
-            setUncheckViewState(afterState, true)
+            setCheckedViewState(afterState, true)
         }
         valueAnimator?.start()
     }
