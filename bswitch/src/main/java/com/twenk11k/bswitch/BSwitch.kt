@@ -86,7 +86,6 @@ class BSwitch : View, Checkable {
 
     private var checkedLineOffsetX = 0f
     private var checkedLineOffsetY = 0f
-    private var enableEffect = false
 
     private val postPendingDrag = Runnable {
         if (!isInAnimating()) {
@@ -610,10 +609,6 @@ class BSwitch : View, Checkable {
             afterState?.radius = viewRadius
         }
         valueAnimator?.start()
-    }
-
-    fun setEnableEffect(enable: Boolean) {
-        enableEffect = enable
     }
 
     private fun pendingStateSettle() {
