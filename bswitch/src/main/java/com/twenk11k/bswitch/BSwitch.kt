@@ -13,7 +13,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Checkable
@@ -34,13 +33,13 @@ import com.twenk11k.bswitch.utils.Utils.Companion.typedPixelSize
 
 class BSwitch : View, Checkable {
 
-    private val widthDefault = dpToPxInt(60f)
-    private val heightDefault: Int = dpToPxInt(32f)
+    private val widthDefault = dpToPxInt(66f)
+    private val heightDefault: Int = dpToPxInt(34f)
     private val durationDefault = 400
     private val borderWidthDefault = 2f
     private val arcStrokeWidthDefault = 2f
     private val arcSweepAngleDefault = 360
-    private val arcPaddingDefault = 14
+    private val arcPaddingDefault = 18
     private val drawCircleEnabledDefault = false
 
     private var borderWidth = dpToPxInt(borderWidthDefault)
@@ -230,9 +229,9 @@ class BSwitch : View, Checkable {
             canvas,
             left, top, right, bottom,
             viewRadius, paint!!
-        )      
+        )
 
-        if(drawCircleEnabled)
+        if (drawCircleEnabled)
             canvas.drawCircle(viewState!!.buttonX, centerY, circleCornerRadius, circlePaint!!)
         else
             canvas.drawArc(arcRect, 0f, arcSweepAngle.toFloat(), true, circlePaint!!)
@@ -325,8 +324,6 @@ class BSwitch : View, Checkable {
         arcRect.top = top + arcPadding
         arcRect.bottom = bottom - arcPadding
 
-        Log.d("BSwitch", "minX: $buttonMinX")
-        Log.d("BSwitch", "maxX: $buttonMaxX")
         isChecked = true
         if (isChecked()) {
             arcRect.right = getArcRightEnd()
@@ -343,7 +340,6 @@ class BSwitch : View, Checkable {
     }
 
     private fun setUnCheckedViewState(viewState: ViewState?, isReversed: Boolean) {
-        Log.d("BSwitch", "toggle unchecked")
         viewState?.radius = viewRadius
         if (isReversed) {
             viewState?.checkStateColor = uncheckedColor
@@ -355,16 +351,13 @@ class BSwitch : View, Checkable {
     }
 
     private fun setCheckedViewState(viewState: ViewState?, isReversed: Boolean) {
-        Log.d("BSwitch", "toggle checked")
         viewState?.radius = 1f
         if (isReversed) {
             viewState?.checkStateColor = checkedColor
             viewState?.buttonX = buttonMinX
-            viewState?.arcX = viewState!!.buttonX - arcPadding
         } else {
             viewState?.checkStateColor = uncheckedColor
             viewState?.buttonX = buttonMaxX
-            viewState?.arcX = viewState!!.buttonX - arcPadding
         }
     }
 
@@ -391,22 +384,28 @@ class BSwitch : View, Checkable {
             when (animateState) {
                 ANIMATE_STATE_SWITCH -> {
 
-                    Log.d("BSwitchOnAnim", "ANIMATE_STATE_SWITCH")
                     viewState?.buttonX = (beforeState!!.buttonX
                             + (afterState!!.buttonX - beforeState!!.buttonX) * value)
+
                     val fraction = (viewState!!.buttonX - buttonMinX) / (buttonMaxX - buttonMinX)
+
                     viewState?.checkStateColor = argbEvaluator.evaluate(
                         1 - fraction,
                         uncheckedColor,
                         checkedColor
                     ) as Int
+
                     viewState?.radius = fraction * viewRadius
 
-                    viewState?.arcX = viewState!!.buttonX - beforeState!!.buttonX
+                    val buttonX = (buttonMinX
+                            + (buttonMaxX - buttonMinX + arcRect.height())
+                            * fraction)
 
-                    val arcLeftValue = arcRect.left + viewState!!.arcX
-
-                    val arcLeft = getClampValue(arcLeftValue, getArcLeftEnd(), getArcRightEnd())
+                    val arcLeft = getClampValue(
+                        buttonX-arcPadding,
+                        getArcLeftEnd(),
+                        getArcRightEnd()
+                    )
 
                     arcRect.left = arcLeft
                     arcRect.right = arcLeft + measureArcWidth(arcLeft)
@@ -416,20 +415,24 @@ class BSwitch : View, Checkable {
                     run {}
                     run {}
                     run {
-                        Log.d("BSwitchOnAnim", "ANIMATE_STATE_PENDING_SETTLE")
-
                         viewState?.radius = (beforeState!!.radius
                                 + (afterState!!.radius - beforeState!!.radius) * value)
                         if (animateState != ANIMATE_STATE_PENDING_DRAG) {
                             viewState?.buttonX = (beforeState!!.buttonX
                                     + (afterState!!.buttonX - beforeState!!.buttonX) * value)
 
-                            viewState?.arcX = viewState!!.buttonX - beforeState!!.buttonX
+                            val fraction =
+                                (viewState!!.buttonX - buttonMinX) / (buttonMaxX - buttonMinX)
 
-                            val arcLeftValue = arcRect.left + viewState!!.arcX
+                            val buttonX = (buttonMinX
+                                    + (buttonMaxX - buttonMinX + arcRect.height())
+                                    * fraction)
 
-                            val arcLeft =
-                                getClampValue(arcLeftValue, getArcLeftEnd(), getArcRightEnd())
+                            val arcLeft = getClampValue(
+                                buttonX-arcPadding,
+                                getArcLeftEnd(),
+                                getArcRightEnd()
+                            )
 
                             arcRect.left = arcLeft
                             arcRect.right = arcLeft + measureArcWidth(arcLeft)
@@ -443,13 +446,27 @@ class BSwitch : View, Checkable {
                     }
                 }
                 ANIMATE_STATE_PENDING_DRAG -> {
-                    Log.d("BSwitchOnAnim", "ANIMATE_STATE_PENDING_DRAG")
-
                     viewState?.radius = (beforeState!!.radius
                             + (afterState!!.radius - beforeState!!.radius) * value)
                     if (animateState != ANIMATE_STATE_PENDING_DRAG) {
                         viewState?.buttonX = (beforeState!!.buttonX
                                 + (afterState!!.buttonX - beforeState!!.buttonX) * value)
+
+                        val fraction =
+                            (viewState!!.buttonX - buttonMinX) / (buttonMaxX - buttonMinX)
+
+                        val buttonX = (buttonMinX
+                                + (buttonMaxX - buttonMinX + arcRect.height())
+                                * fraction)
+
+                        val arcLeft = getClampValue(
+                            buttonX-arcPadding,
+                            getArcLeftEnd(),
+                            getArcRightEnd()
+                        )
+
+                        arcRect.left = arcLeft
+                        arcRect.right = arcLeft + measureArcWidth(arcLeft)
 
                     }
                     viewState?.checkStateColor = argbEvaluator.evaluate(
@@ -458,26 +475,28 @@ class BSwitch : View, Checkable {
                         afterState?.checkStateColor
                     ) as Int
 
-                    Log.d("BSwitchOnAnim", "isChecked: $isChecked")
-
                 }
                 ANIMATE_STATE_PENDING_RESET -> {
                     run {}
                     run {
-                        Log.d("BSwitchOnAnim", "ANIMATE_STATE_PENDING_RESET")
-
                         viewState?.radius = (beforeState!!.radius
                                 + (afterState!!.radius - beforeState!!.radius) * value)
                         if (animateState != ANIMATE_STATE_PENDING_DRAG) {
                             viewState?.buttonX = (beforeState!!.buttonX
                                     + (afterState!!.buttonX - beforeState!!.buttonX) * value)
 
-                            viewState?.arcX = viewState!!.buttonX - beforeState!!.buttonX
+                            val fraction =
+                                (viewState!!.buttonX - buttonMinX) / (buttonMaxX - buttonMinX)
 
-                            val arcLeftValue = arcRect.left + viewState!!.arcX
+                            val buttonX = (buttonMinX
+                                    + (buttonMaxX - buttonMinX + arcRect.height())
+                                    * fraction)
 
-                            val arcLeft =
-                                getClampValue(arcLeftValue, getArcLeftEnd(), getArcRightEnd())
+                            val arcLeft = getClampValue(
+                                buttonX-arcPadding,
+                                getArcLeftEnd(),
+                                getArcRightEnd()
+                            )
 
                             arcRect.left = arcLeft
                             arcRect.right = arcLeft + measureArcWidth(arcLeft)
@@ -551,48 +570,46 @@ class BSwitch : View, Checkable {
         val actionMasked = event.actionMasked
         when (actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                Log.d("BSwitch", "ACTION_DOWN")
                 isTouchingDown = true
                 touchDownTime = System.currentTimeMillis()
                 removeCallbacks(postPendingDrag)
                 postDelayed(postPendingDrag, 100)
             }
             MotionEvent.ACTION_MOVE -> {
-                Log.d("BSwitch", "ACTION_MOVE")
                 val eventX = event.x
                 if (isPendingStateDrag()) {
                     var fraction = eventX / getWidth()
                     fraction = maxOf(0f, minOf(1f, fraction))
-                    Log.d("BSwitch", "fraction: $fraction")
-
-                    var arcHalfHeight = 0f
-                    if(!drawCircleEnabled)
-                        arcHalfHeight = arcRect.height() / 2
+                    var arcHeight = 0f
+                    if (!drawCircleEnabled)
+                        arcHeight = arcRect.height()
 
                     val buttonX = (buttonMinX
-                            + (buttonMaxX - buttonMinX + arcHalfHeight)
+                            + (buttonMaxX - buttonMinX + arcHeight)
                             * fraction)
 
                     viewState?.buttonX = buttonX
 
-                    viewState?.arcX = viewState!!.buttonX - arcPadding
+                    val arcLeft = getClampValue(
+                        buttonX-arcPadding,
+                        getArcLeftEnd(),
+                        getArcRightEnd()
+                    )
 
-                    Log.d("SwitchButton_viewarcx", viewState!!.arcX.toString())
-
-                    arcRect.left = viewState!!.arcX
-                    arcRect.right = viewState!!.arcX + measureArcWidth(viewState!!.arcX)
+                    arcRect.left = arcLeft
+                    arcRect.right = arcLeft + measureArcWidth(arcLeft)
 
                 } else if (isStateDrag()) {
                     var fraction = eventX / getWidth()
 
                     fraction = maxOf(0f, minOf(1f, fraction))
 
-                    var arcHalfHeight = 0f
-                    if(!drawCircleEnabled)
-                        arcHalfHeight = arcRect.height() / 2
+                    var arcHeight = 0f
+                    if (!drawCircleEnabled)
+                        arcHeight = arcRect.height()
 
                     val buttonX = (buttonMinX
-                            + (buttonMaxX - buttonMinX + arcHalfHeight)
+                            + (buttonMaxX - buttonMinX + arcHeight)
                             * fraction)
 
                     viewState?.buttonX = buttonX
@@ -602,22 +619,22 @@ class BSwitch : View, Checkable {
                         checkedColor
                     ) as Int
 
-                    viewState?.arcX = viewState!!.buttonX - arcPadding
+                    val arcLeft = getClampValue(
+                        buttonX-arcPadding,
+                        getArcLeftEnd(),
+                        getArcRightEnd()
+                    )
 
-                    Log.d("SwitchButton_arcX", viewState!!.arcX.toString())
+                    arcRect.left = arcLeft
+                    arcRect.right = arcLeft + measureArcWidth(arcLeft)
 
-                    arcRect.left = viewState!!.arcX
-                    arcRect.right = viewState!!.arcX + measureArcWidth(viewState!!.arcX)
-                    Log.d("BSwitchCondition", "elseeee")
                     postInvalidate()
                 }
             }
             MotionEvent.ACTION_UP -> {
-                Log.d("BSwitch", "ACTION_UP")
                 isTouchingDown = false
                 removeCallbacks(postPendingDrag)
                 if (System.currentTimeMillis() - touchDownTime <= 300) {
-                    Log.d("BSwitchOnAnim", "toggle")
                     toggle(true, true)
                 } else if (isStateDrag()) {
                     val eventX = event.x
@@ -625,24 +642,19 @@ class BSwitch : View, Checkable {
                     fraction = maxOf(0f, minOf(1f, fraction))
                     val newCheck = fraction > .5f
                     if (newCheck == isChecked()) {
-                        Log.d("BSwitchCondition", "if")
                         pendingStateCancelDrag()
                     } else {
-                        Log.d("BSwitchCondition", "else")
                         isChecked = newCheck
                         pendingStateSettle()
                     }
                 } else if (isPendingStateDrag()) {
-                    Log.d("BSwitchCondition", "else else if")
                     pendingStateCancelDrag()
                 }
             }
             MotionEvent.ACTION_CANCEL -> {
-                Log.d("BSwitch", "ACTION_CANCEL")
                 isTouchingDown = false
                 removeCallbacks(postPendingDrag)
                 if (isPendingStateDrag() || isStateDrag()) {
-                    Log.d("BSwitchCondition", "cancel if")
                     pendingStateCancelDrag()
                 }
             }
@@ -715,11 +727,9 @@ class BSwitch : View, Checkable {
         if (isChecked()) {
             afterState?.checkStateColor = uncheckedColor
             afterState?.buttonX = buttonMinX
-            afterState?.arcX = afterState!!.buttonX - arcPadding
         } else {
             afterState?.checkStateColor = checkedColor
             afterState?.buttonX = buttonMaxX
-            afterState?.arcX = afterState!!.buttonX - arcPadding
             afterState?.radius = viewRadius
         }
         valueAnimator?.start()
@@ -742,13 +752,11 @@ class BSwitch : View, Checkable {
     private inner class ViewState {
 
         var buttonX = 0f
-        var arcX = 0f
         var checkStateColor = 0
         var radius = 0f
 
         fun update(source: ViewState) {
             buttonX = source.buttonX
-            arcX = source.arcX
             checkStateColor = source.checkStateColor
             radius = source.radius
         }
