@@ -7,6 +7,7 @@ import android.util.TypedValue
 class Utils {
 
     companion object {
+
         fun typedInt(
             typedArray: TypedArray?,
             index: Int,
