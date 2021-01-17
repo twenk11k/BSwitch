@@ -18,7 +18,7 @@ import android.view.View
 import android.widget.Checkable
 import androidx.core.content.ContextCompat
 import androidx.core.math.MathUtils
-import com.twenk11k.bswitch.utils.Constants.ANIMATE_STATE_DRAGING
+import com.twenk11k.bswitch.utils.Constants.ANIMATE_STATE_DRAGGING
 import com.twenk11k.bswitch.utils.Constants.ANIMATE_STATE_NONE
 import com.twenk11k.bswitch.utils.Constants.ANIMATE_STATE_PENDING_DRAG
 import com.twenk11k.bswitch.utils.Constants.ANIMATE_STATE_PENDING_RESET
@@ -29,7 +29,6 @@ import com.twenk11k.bswitch.utils.Utils.Companion.typedBoolean
 import com.twenk11k.bswitch.utils.Utils.Companion.typedColor
 import com.twenk11k.bswitch.utils.Utils.Companion.typedInt
 import com.twenk11k.bswitch.utils.Utils.Companion.typedPixelSize
-
 
 class BSwitch : View, Checkable {
 
@@ -402,7 +401,7 @@ class BSwitch : View, Checkable {
                             * fraction)
 
                     val arcLeft = getClampValue(
-                        buttonX-arcPadding,
+                        buttonX - arcPadding,
                         getArcLeftEnd(),
                         getArcRightEnd()
                     )
@@ -429,7 +428,7 @@ class BSwitch : View, Checkable {
                                     * fraction)
 
                             val arcLeft = getClampValue(
-                                buttonX-arcPadding,
+                                buttonX - arcPadding,
                                 getArcLeftEnd(),
                                 getArcRightEnd()
                             )
@@ -460,7 +459,7 @@ class BSwitch : View, Checkable {
                                 * fraction)
 
                         val arcLeft = getClampValue(
-                            buttonX-arcPadding,
+                            buttonX - arcPadding,
                             getArcLeftEnd(),
                             getArcRightEnd()
                         )
@@ -493,7 +492,7 @@ class BSwitch : View, Checkable {
                                     * fraction)
 
                             val arcLeft = getClampValue(
-                                buttonX-arcPadding,
+                                buttonX - arcPadding,
                                 getArcLeftEnd(),
                                 getArcRightEnd()
                             )
@@ -522,10 +521,10 @@ class BSwitch : View, Checkable {
         override fun onAnimationStart(animation: Animator) {}
         override fun onAnimationEnd(animation: Animator) {
             when (animateState) {
-                ANIMATE_STATE_DRAGING -> {
+                ANIMATE_STATE_DRAGGING -> {
                 }
                 ANIMATE_STATE_PENDING_DRAG -> {
-                    animateState = ANIMATE_STATE_DRAGING
+                    animateState = ANIMATE_STATE_DRAGGING
                     viewState?.radius = viewRadius
                     postInvalidate()
                 }
@@ -591,7 +590,7 @@ class BSwitch : View, Checkable {
                     viewState?.buttonX = buttonX
 
                     val arcLeft = getClampValue(
-                        buttonX-arcPadding,
+                        buttonX - arcPadding,
                         getArcLeftEnd(),
                         getArcRightEnd()
                     )
@@ -620,7 +619,7 @@ class BSwitch : View, Checkable {
                     ) as Int
 
                     val arcLeft = getClampValue(
-                        buttonX-arcPadding,
+                        buttonX - arcPadding,
                         getArcLeftEnd(),
                         getArcRightEnd()
                     )
@@ -703,7 +702,7 @@ class BSwitch : View, Checkable {
     }
 
     private fun isStateDrag(): Boolean {
-        return animateState == ANIMATE_STATE_DRAGING
+        return animateState == ANIMATE_STATE_DRAGGING
     }
 
     private fun isPendingStateDrag(): Boolean {
