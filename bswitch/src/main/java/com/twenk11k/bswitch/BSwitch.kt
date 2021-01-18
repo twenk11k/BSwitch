@@ -4,7 +4,6 @@ package com.twenk11k.bswitch
 import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
@@ -108,16 +107,6 @@ class BSwitch : View, Checkable {
         context,
         attrs,
         defStyleAttr
-    ) {
-        init(context, attrs)
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(
-        context,
-        attrs,
-        defStyleAttr,
-        defStyleRes
     ) {
         init(context, attrs)
     }
