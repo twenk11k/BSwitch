@@ -44,7 +44,7 @@ class Utils {
             return dpToPx(dp).toInt()
         }
 
-        fun dpToPx(dp: Float): Float {
+        private fun dpToPx(dp: Float): Float {
             val r = Resources.getSystem()
             return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.displayMetrics)
         }
